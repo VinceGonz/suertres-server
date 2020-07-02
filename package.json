@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "now-start": "node .",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "lint": "lint src"
   },
   "repository": {
     "type": "git",
