@@ -2,12 +2,13 @@ const express = require('express');
 const morgan = require('morgan'); // ? Logging the status of each request sent
 const helmet = require('helmet'); // ? For more security on the headers
 const cors = require('cors'); // ? To allow specific IP Addresses to have a access to the API
-// const db = require('./config/database');
+const db = require('./config/database');
 require('dotenv').config();
 
 const { notFound, errorHandler } = require('./middlewares');
 
 // * Import Routes
+const betsRoute = require('./routes/betsRoute')
 // const authRoute = require('./routes/authRoute');
 // const usersRoute = require('./routes/usersRoute');
 // const transactionRoute = require('./routes/transactionsRoute');
@@ -33,6 +34,7 @@ app.use(cors('*'));
   
 
 // * Setup Routes
+app.use('/api/betsRoute', betsRoute);
 // app.use('/api/auth', authRoute);
 // app.use('/api/users', usersRoute);
 // app.use('/api/transactions', transactionRoute);
@@ -55,11 +57,12 @@ const port = process.env.PORT || 5000; // during deployment change to 8080
 
 app.listen(port, async () => {
   try{
-    // const connection = await db.connect();
-    // console.log('Successfully Connected to the Database', connection);
+    const connection = await db.connect();
+    console.log('Successfully Connected to the Database', connection);
     console.log(`Server is running on port ${port}`);
   }catch(err){
     console.log(err)
+    console.log('ERROR');
   }
   
 });
