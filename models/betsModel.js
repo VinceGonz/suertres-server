@@ -4,8 +4,8 @@ const db = require('../config/database');
 
 const insertBet = (bet) => {
     const insertBetQuery = {
-        text: `INSERT INTO tbl_bets (bets_id, cell_num, date, draw) VALUES ($1,$2,$3,$4)`,
-        values: [bet.bets_id, bet.cellNum, bet.date, bet.draw]
+        text: `INSERT INTO tbl_bets (bets_id, cell_num, date, draw, number, amount) VALUES ($1,$2,$3,$4,$5,$6)`,
+        values: [bet.bet_id, bet.cellNum, bet.date, bet.draw, bet.number, bet.amount]
     }
 
     return new Promise(async(resolve, reject) => {
@@ -43,7 +43,7 @@ const insertNumber = (bet) => {
 
 const getAllBets = () => {
     const getAllBetsQuery = {
-        text: `SELECT b.bets_id, l.list_id, b.cell_num, b.date, b.draw, l.number, l.amount FROM tbl_bets b INNER JOIN tbl_list l on b.bets_id = l.bets_id`,
+        text: `SELECT * FROM tbl_bets`,
     }
 
     return new Promise(async(resolve, reject) => {
@@ -60,7 +60,7 @@ const getAllBets = () => {
 
 const deleteNumber = (id) => {
     const deleteNumberQuery = {
-        text: `DELETE FROM tbl_list WHERE list_id = $1`,
+        text: `DELETE FROM tbl_bets WHERE bets_id = $1`,
         values: [id]
     }
 
@@ -75,9 +75,27 @@ const deleteNumber = (id) => {
     });
 }
 
+
+const updateBet = (bet) => {
+    console.log('WTF BETTER SHIT', bet);
+    const updateBetQuery = `UPDATE tbl_bets SET cell_num = '${bet.cell_num}', date = '${bet.date}', draw = '${bet.draw}', number = '${bet.number}', amount = ${bet.amount} WHERE bets_id = '${bet.bet_id}'`
+    console.log(updateBetQuery)
+    return new Promise(async(resolve, reject) => {
+        try {
+            const updateBetQuery_Result = await db.query(updateBetQuery);
+            resolve(updateBetQuery_Result)
+        } catch (error) {
+            reject(error)
+            console.log('Error Updating Bet', error);
+        }
+    })
+}
+
+
 module.exports = {
     insertBet,
     insertNumber,
     getAllBets,
-    deleteNumber
+    deleteNumber,
+    updateBet
 }

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {v4: uuid} = require('uuid');
 
-const {insertBet, insertNumber, getAllBets, deleteNumber} = require('../models/betsModel');
+const {insertBet, insertNumber, getAllBets, deleteNumber,updateBet} = require('../models/betsModel');
 const { json } = require('express');
 
 const Nexmo = require('nexmo');
@@ -73,40 +73,69 @@ router.post('/sendSMS', (req, res) => {
 })
 
 router.post('/addBet', async (req, res) => {
+    console.log(req.body)
     // delete req.body.bets
+    let totalInsertedRows = 0;
     req.body.bets_id = uuid()
     // console.log(req.body);
     const {bets_id} = req.body;
     // ! This try catch is use to insert new bet in tbl_bets
     try {
-        const insertBet_result = await insertBet(req.body)
-        const {command: action, rowCount} = insertBet_result;
-        if(rowCount){
-            res.status(200).json({Message: `Successfully Inserted a New Bet`, action, Body: req.body, SuccessCode: 1},)
-        }else{
-            res.status(500).json({Message: `Failed to Insert New Bet`, SuccessCode: 0})
-        }
+        
+        req.body.forEach(async bet => {
+            const {cellNum, draw, date, number, amount} = bet;
+            console.log('bet brortha', bet)
+            const insertBet_result = await insertBet({bet_id: uuid(), cellNum, date, draw, number,amount})
+            const {command: action, rowCount} = insertBet_result;
+            if(rowCount){
+                totalInsertedRows += 1;
+                console.log('totaInserted',totalInsertedRows)
+            }
+        });
+
+        // if(req.body.length){
+        //     for(let i = 0; i <= req.body.length; i++){
+        //         console.log('LENGTH', req.body.length);
+        //         // console.log('[i]',req.body[i].cellNum)
+        //         // const {draw, date, number, amount} = req.body[i];
+        //         const insertBet_result = await insertBet({bet_id: uuid(), cellNum: req.body[i].cellNum, date:req.body[i].date, draw: req.body[i].draw, number: req.body[i].number,amount: req.body[i].amount})
+        //         const {command: action, rowCount} = insertBet_result;
+        //         if(rowCount){
+        //             totalInsertedRows += 1;
+        //             console.log('totaInserted',totalInsertedRows)
+        //         }
+                
+        //         if(i === req.body.length){
+        //             console.log('totaInserted',totalInsertedRows)
+        //             if(totalInsertedRows){
+        //                 res.status(200).json({Message: `Successfully Inserted ${totalInsertedRows} Bet(s)`, SuccessCode: 1},)
+        //             }else if(!totalInsertedRows){
+        //                 console.log('WTF MEN')
+        //                 res.status(500).json({Message: `Failed to Insert Bet`, SuccessCode: 0})
+        //             }
+        //         }
+        //     }
+        // }
+        
+        
     } catch (error) {
         console.log('Adding newBet route error', error)
     }
-    // ! This try catch is use to insert new Number in tbl_list
-    try {
+    // // ! This try catch is use to insert new Number in tbl_list
+    // try {
         
-        req.body.bets.forEach(async bet => {
-            const insertNumber_Result = await insertNumber({list_id: uuid(), bets_id, number: bet.number, amount: bet.amount});
-            const {rowCount} = insertNumber_Result;
-            if(rowCount){
-                console.log("New Number Inserted", {number: bet.number, amount: bet.amount})
-            }else{
-                res.status(500).json({Message: `Failed to Insert New Number`, SuccessCode: 0})
-            }
-        });
-    } catch (error) {
-        console.log('Error inserting new number', error)
-    }
-
-
-
+    //     req.body.bets.forEach(async bet => {
+    //         const insertNumber_Result = await insertNumber({list_id: uuid(), bets_id, number: bet.number, amount: bet.amount});
+    //         const {rowCount} = insertNumber_Result;
+    //         if(rowCount){
+    //             console.log("New Number Inserted", {number: bet.number, amount: bet.amount})
+    //         }else{
+    //             res.status(500).json({Message: `Failed to Insert New Number`, SuccessCode: 0})
+    //         }
+    //     });
+    // } catch (error) {
+    //     console.log('Error inserting new number', error)
+    // }
 });
 
 
@@ -126,7 +155,21 @@ router.delete('/deleteNumber/:id', async (req, res) => {
     } catch (error) {
         console.log('Error Deleting number', error);
     }
-
 })
+
+router.put('/updateBet/:id', async (req, res) => {
+    let bet_id = req.params.id;
+    const {cell_num, date, draw, number, amount} = req.body;
+    console.log({cell_num,date,draw,number,amount,bet_id});
+    try {
+        const updateBet_Result = await updateBet({cell_num,date,draw,number,amount,bet_id});
+        const {rowCount} = updateBet_Result;
+        console.log(updateBet_Result)
+        res.status(200).json({Message: "Successfully Updated bet"})
+        
+    } catch (error) {
+        
+    }
+});
 
 module.exports = router;
