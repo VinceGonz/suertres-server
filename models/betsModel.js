@@ -50,6 +50,7 @@ const getAllBets = () => {
         try {
             const getAllBetsQuery_Result = await db.query(getAllBetsQuery);
             resolve(getAllBetsQuery_Result)
+            // console.log(getAllBetsQuery_Result);
         }catch(error){
             console.log('Fetching all bets Error', error);
             reject(error)
@@ -57,8 +58,26 @@ const getAllBets = () => {
     })
 }
 
+const deleteNumber = (id) => {
+    const deleteNumberQuery = {
+        text: `DELETE FROM tbl_list WHERE list_id = $1`,
+        values: [id]
+    }
+
+    return new Promise(async(resolve,reject) => {
+        try {
+            const deleteNumberQuery_Result = await db.query(deleteNumberQuery);
+            resolve(deleteNumberQuery_Result);
+        }catch(error){
+            console.log('Deleting number error');
+            reject(error)
+        }
+    });
+}
+
 module.exports = {
     insertBet,
     insertNumber,
-    getAllBets
+    getAllBets,
+    deleteNumber
 }

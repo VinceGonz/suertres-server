@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {v4: uuid} = require('uuid');
 
-const {insertBet, insertNumber, getAllBets} = require('../models/betsModel');
+const {insertBet, insertNumber, getAllBets, deleteNumber} = require('../models/betsModel');
 const { json } = require('express');
 
 const Nexmo = require('nexmo');
@@ -22,12 +22,15 @@ router.get('/getAllBets', async (req, res) => {
     
     try {
         const getAllBets_result = await getAllBets();
-        console.log(getAllBets_result)
+        // console.log(getAllBets_result)
         const {rowCount, rows, command: action} = getAllBets_result;
         if(rowCount){
             res.status(200).json({Message: `Successfully Fetched All Bets`,action, Bets: rows, SuccessCode: 1})
-        }else{
-            res.status(500),json({Message: `Failed to Fetch All Bets`, SuccessCode: 0})
+            console.log('tang ina mo');
+        }
+        if(!rowCount){
+            res.status(200).json({Message: `No bets available in the database`,action, Bets: rows, SuccessCode: 1})
+            console.log('WTF BRO')
         }
         
     } catch (error) {
@@ -72,12 +75,9 @@ router.post('/sendSMS', (req, res) => {
 router.post('/addBet', async (req, res) => {
     // delete req.body.bets
     req.body.bets_id = uuid()
-    
-    console.log(req.body);
+    // console.log(req.body);
     const {bets_id} = req.body;
-
     // ! This try catch is use to insert new bet in tbl_bets
-
     try {
         const insertBet_result = await insertBet(req.body)
         const {command: action, rowCount} = insertBet_result;
@@ -86,13 +86,10 @@ router.post('/addBet', async (req, res) => {
         }else{
             res.status(500).json({Message: `Failed to Insert New Bet`, SuccessCode: 0})
         }
-
     } catch (error) {
         console.log('Adding newBet route error', error)
     }
-
     // ! This try catch is use to insert new Number in tbl_list
-
     try {
         
         req.body.bets.forEach(async bet => {
@@ -113,10 +110,23 @@ router.post('/addBet', async (req, res) => {
 });
 
 
+router.delete('/deleteNumber/:id', async (req, res) => {
+    let list_id = req.params.id;
 
+    try {
+        const deleteNumber_Result = await deleteNumber(list_id);
+        // console.log(deleteNumber_Result)
+        const {rowCount, command: action} = deleteNumber_Result;
+        if(rowCount){
+            res.status(200).json({Message: "Successfully deleted number", action, id: list_id,SuccessCode: 1})
+        }else{
+            res.status(500).json({Message: "Failed deleted number", action, SuccessCode: 0})
+        }
+        
+    } catch (error) {
+        console.log('Error Deleting number', error);
+    }
 
-
-
-
+})
 
 module.exports = router;
