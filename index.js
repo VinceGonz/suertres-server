@@ -9,6 +9,8 @@ const { notFound, errorHandler } = require('./middlewares');
 
 // * Import Routes
 const betsRoute = require('./routes/betsRoute')
+const authRoute = require('./routes/authRoute')
+
 // const authRoute = require('./routes/authRoute');
 // const usersRoute = require('./routes/usersRoute');
 // const transactionRoute = require('./routes/transactionsRoute');
@@ -19,9 +21,16 @@ const betsRoute = require('./routes/betsRoute')
 const app = express();
 
 
+
+
+
 // * Setup built in express body-parser
 // ! NOTE: Always setup the body-parser on top of the routes.
 app.use(express.json());
+
+
+// ignore options request
+// app.options('*', (req, res, next) => res.sendStatus(200));
 
 // * Setup Morgan Middleware
 app.use(morgan('dev')); // ? Can use 'dev' / 'common' as parameter
@@ -33,8 +42,12 @@ app.use(helmet());
 app.use(cors('*'));
   
 
+
+
 // * Setup Routes
 app.use('/api/betsRoute', betsRoute);
+app.use('/api/authRoute', authRoute);
+
 // app.use('/api/auth', authRoute);
 // app.use('/api/users', usersRoute);
 // app.use('/api/transactions', transactionRoute);
@@ -52,6 +65,7 @@ app.use(notFound);
 
 // * Setup Error handler middleware
 app.use(errorHandler);
+
 
 const port = process.env.PORT || 5000; // during deployment change to 8080
 

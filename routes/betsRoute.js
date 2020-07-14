@@ -35,6 +35,7 @@ router.get('/getAllBets', async (req, res) => {
         
     } catch (error) {
         console.log(`Fetching all bets error`, error)
+        res.status(500).json({Message: `Failed fetching all bets`});
     }
 })
 
@@ -108,11 +109,12 @@ router.delete('/deleteNumber/:id', async (req, res) => {
         if(rowCount){
             res.status(200).json({Message: "Successfully deleted number", action, id: list_id,SuccessCode: 1})
         }else{
-            res.status(500).json({Message: "Failed deleted number", action, SuccessCode: 0})
+            res.status(500).json({Message: "Failed to delete number", action, SuccessCode: 0})
         }
         
     } catch (error) {
         console.log('Error Deleting number', error);
+        res.status(500).json({Message: "Failed to delete number", action, SuccessCode: 0})
     }
 })
 
@@ -127,7 +129,8 @@ router.put('/updateBet/:id', async (req, res) => {
         res.status(200).json({Message: "Successfully Updated bet"})
         
     } catch (error) {
-        
+        console.log('Error Updating a bet');
+        res.status(500).json({Message: "Failed to update a number", action, SuccessCode: 0})
     }
 });
 

@@ -19,10 +19,6 @@ const insertBet = (bet) => {
     })
 }
 
-module.exports = {
-    insertBet
-}
-
 
 const insertNumber = (bet) => {
     const insertNumberQuery = {
