@@ -100,14 +100,14 @@ router.post('/addBet', async (req, res) => {
 
 
 router.delete('/deleteNumber/:id', async (req, res) => {
-    let list_id = req.params.id;
-
+    let bets_id = req.params.id;
+    console.log(req)
     try {
-        const deleteNumber_Result = await deleteNumber(list_id);
+        const deleteNumber_Result = await deleteNumber(bets_id);
         // console.log(deleteNumber_Result)
         const {rowCount, command: action} = deleteNumber_Result;
         if(rowCount){
-            res.status(200).json({Message: "Successfully deleted number", action, id: list_id,SuccessCode: 1})
+            res.status(200).json({Message: "Successfully deleted number", action, id: bets_id,SuccessCode: 1})
         }else{
             res.status(500).json({Message: "Failed to delete number", action, SuccessCode: 0})
         }
