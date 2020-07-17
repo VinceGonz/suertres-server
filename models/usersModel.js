@@ -6,7 +6,6 @@ const db = require('../config/database');
 
 const addUser = async (user) => {
     const {user_id,fname, lname, username, password} = user;
-    console.log(user)
     const addUserQuery = {
         text: `INSERT INTO tbl_users VALUES ($1,$2,$3,$4,$5,DEFAULT, DEFAULT, DEFAULT, DEFAULT)`,
         values:[user_id,fname,lname,username,password]

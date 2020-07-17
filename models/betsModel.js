@@ -46,7 +46,6 @@ const getAllBets = () => {
         try {
             const getAllBetsQuery_Result = await db.query(getAllBetsQuery);
             resolve(getAllBetsQuery_Result)
-            // console.log(getAllBetsQuery_Result);
         }catch(error){
             console.log('Fetching all bets Error', error);
             reject(error)
@@ -73,9 +72,7 @@ const deleteNumber = (id) => {
 
 
 const updateBet = (bet) => {
-    console.log('WTF BETTER SHIT', bet);
     const updateBetQuery = `UPDATE tbl_bets SET cell_num = '${bet.cell_num}', date = '${bet.date}', draw = '${bet.draw}', number = '${bet.number}', amount = ${bet.amount} WHERE bets_id = '${bet.bet_id}'`
-    console.log(updateBetQuery)
     return new Promise(async(resolve, reject) => {
         try {
             const updateBetQuery_Result = await db.query(updateBetQuery);
